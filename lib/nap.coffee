@@ -66,15 +66,15 @@ module.exports = (options = {}) =>
 # @param {String} pkg The name of the package to output
 # @return {String} Script tag(s) pointing to the ouput package(s)
 
-module.exports.js = (pkg, gzip = @gzip) =>
+module.exports.js = (pkg, gzipped, gzip = @gzip) =>
   throw new Error "Cannot find package '#{pkg}'" unless @assets.js[pkg]?
 
   if @mode is 'production'
+    gzip = true if gzipped
     fingerprint = '-' + fingerprintForPkg('js', pkg) if @mode is 'production'
     src = (@cdnUrl ? @_assetsDir) + '/' + "#{pkg}#{fingerprint ? ''}.js"
     src += '.jgz' if gzip
-    # return "<script src='#{src}' type='text/javascript'></script>"
-    return "#{src}"
+    if gzip then return "<script src='#{src}' type='text/javascript'></script>" else return "#{src}"
 
   expandAssetGlobs()
 
@@ -148,7 +148,8 @@ module.exports.package = (callback = ->) =>
       fingerprint = '-' + fingerprintForPkg('js', pkg)
       filename = "#{pkg}#{fingerprint ? ''}.js"
       writeFile filename, contents
-      if @gzip then gzipPkg(contents, filename, callback) else callback()
+      # if @gzip then gzipPkg(contents, filename, callback) else callback()
+      gzipPkg(contents, filename, callback)
       total++
 
   if @assets.css?
