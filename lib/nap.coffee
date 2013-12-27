@@ -73,7 +73,8 @@ module.exports.js = (pkg, gzip = @gzip) =>
     fingerprint = '-' + fingerprintForPkg('js', pkg) if @mode is 'production'
     src = (@cdnUrl ? @_assetsDir) + '/' + "#{pkg}#{fingerprint ? ''}.js"
     src += '.jgz' if gzip
-    return "<script src='#{src}' type='text/javascript'></script>"
+    # return "<script src='#{src}' type='text/javascript'></script>"
+    return "#{src}"
 
   expandAssetGlobs()
 
